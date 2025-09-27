@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -8,13 +9,15 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Separator } from "@/components/ui/separator";
 
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+
 export function Header() {
   return (
     <>
       <div className="p-2 flex justify-between">
         <NavigationMenu viewport={false}>
           <NavigationMenuItem>
-            <NavigationMenuLink>
+            <NavigationMenuLink asChild>
               <Link to="/" className="text-2xl font-bold">Grimore</Link>
             </NavigationMenuLink>
           </NavigationMenuItem>
@@ -22,16 +25,24 @@ export function Header() {
 
         <NavigationMenu viewport={false}>
           <NavigationMenuList>
-            <NavigationMenuItem>
-              <NavigationMenuLink>
-                <Link to="/" className="text-base">Decks</Link>
-              </NavigationMenuLink>
-            </NavigationMenuItem>
+            <SignedIn>
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild>
+                  <Link to="/" className="text-base">Decks</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </SignedIn>
 
             <NavigationMenuItem>
-              <NavigationMenuLink>
-                <Link to="/" className="text-base">Profile</Link>
-              </NavigationMenuLink>
+              <SignedOut>
+                <SignInButton>
+                  <Button className="ph-bold ph-sign-in" />
+                </SignInButton>
+              </SignedOut>
+
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
