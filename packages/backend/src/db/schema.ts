@@ -1,34 +1,74 @@
-import { integer, text, sqliteTable } from 'drizzle-orm/sqlite-core';
-import { ulid } from 'ulid';
+import { mysqlTable, int, varchar, text, timestamp, mysqlEnum } from "drizzle-orm/mysql-core";
+import { relations } from "drizzle-orm";
+import { ulid } from "ulid";
 
-export const deck = sqliteTable('deck', {
-  id: text("id").primaryKey().$defaultFn(ulid),
-  createdAt: integer("created_at", { mode: 'timestamp' })
-    .$default(() => new Date()),
-  updateAt: integer("update_at", { mode: 'timestamp' })
-    .$default(() => new Date())
-    .$onUpdate(() => new Date()),
+export const deckTable = mysqlTable("deck", {
+  id: varchar("id", { length: 26 })
+    .primaryKey()
+    .$default(() => ulid()),
+  createdAt: timestamp("created_at")
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
   userId: text("user_id").notNull(),
   name: text("name").notNull(),
-  format: text("format").notNull(),
-  status: text("status").notNull(),
+  format: mysqlEnum("format", [
+    "standard",
+    "pioneer",
+    "modern",
+    "legacy",
+    "vintage",
+    "pauper",
+    "commander",
+    "oathbreaker",
+    "other",
+  ]).notNull(),
+  status: mysqlEnum("status", [
+    "public",
+    "limited",
+    "private"
+  ]).notNull(),
 });
 
-
-export const deckCards = sqliteTable('deckCards', {
-  id: text("id").primaryKey().$defaultFn(ulid),
-  createdAt: integer("created_at", { mode: 'timestamp' })
-    .$default(() => new Date()),
-  updateAt: integer("update_at", { mode: 'timestamp' })
-    .$default(() => new Date())
-    .$onUpdate(() => new Date()),
-  deckId: text("deck_id").references(() => deck.id, { onDelete: "cascade" }),
-  oracleId: text("oracle_id").notNull(),
-  imageUri: text("image_uri").notNull(),
+export const cardTable = mysqlTable("card", {
+  id: varchar("id", { length: 26 })
+    .primaryKey()
+    .$default(() => ulid()),
+  createdAt: timestamp("created_at")
+    .defaultNow()
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+  deckId: varchar("deck_id", { length: 26 })
+    .references(() => deckTable.id, { onDelete: "cascade" })
+    .notNull(),
+  oracleId: varchar("oracle_id", { length: 36 }).notNull(),
+  imageUri: text("image_uri"),
   name: text("name").notNull(),
   cardType: text("card_type").notNull(),
-  cmc: integer("cmc").notNull(),
-  amounts: integer("amounts").notNull(),
-  board: text("board").notNull(),
+  cmc: int("cmc"),
+  count: int("count").notNull(),
+  board: mysqlEnum([
+    "main",
+    "side",
+    "commander",
+    "considering",
+  ]).default("main").notNull(),
 });
 
+
+export const deckRelations = relations(deckTable, ({ many }) => ({
+  card: many(cardTable)
+}));
+
+export const cardRelations = relations(cardTable, ({ one }) => ({
+  deck: one(deckTable, {
+    fields: [cardTable.deckId],
+    references: [deckTable.id],
+  }),
+}));

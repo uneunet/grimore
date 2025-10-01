@@ -34,41 +34,27 @@ export function Deck({ deckId }: { deckId: string }) {
   ];
 
   const mainBoard = deck.filter((c) => c.board === "mainboard");
-  const creatures = deck.filter((c) => !c.cardType.includes("Land") && c.cardType.includes("Creature"));
-  const spells = deck.filter((c) => !c.cardType.includes("Land") && !c.cardType.includes("Creature"));
-  const lands = deck.filter((c) => c.cardType.includes("Land"));
+  // const creatures = deck.filter((c) => !c.cardType.includes("Land") && c.cardType.includes("Creature"));
+  // const spells = deck.filter((c) => !c.cardType.includes("Land") && !c.cardType.includes("Creature"));
+  // const lands = deck.filter((c) => c.cardType.includes("Land"));
 
   const sideBoard = deck.filter((c) => c.board === "sideboard");
   const considering = deck.filter((c) => c.board === "considering");
 
   return (
     <div className="mx-2">
-      <h1 className="text-2xl font-bold">メインボード ({countCards(mainBoard)})</h1>
-      <div className="mx-2">
-        <div className="mb-5">
-          <h2 className="text-xl">クリーチャー ({countCards(creatures)})</h2>
-          <DeckCards cards={creatures} />
-        </div>
-
-
-        <div className="mb-4">
-          <h2 className="text-xl">呪文 ({countCards(spells)})</h2>
-          <DeckCards cards={spells} />
-        </div>
-
-        <div className="mb-4">
-          <h2 className="text-xl">土地 ({countCards(lands)})</h2>
-          <DeckCards cards={lands} />
-        </div>
+      <div className="my-4">
+        <h1 className="text-2xl font-bold">メインボード ({countCards(mainBoard)})</h1>
+        <DeckCards cards={mainBoard} />
       </div>
 
-      <div className="mb-4">
+      <div className="my-4">
         <h1 className="text-2xl font-bold">サイドボード ({countCards(sideBoard)})</h1>
         <DeckCards cards={sideBoard} />
       </div>
 
 
-      <div className="mb-4">
+      <div className="my-4">
         <h1 className="text-2xl font-bold">検討中 ({countCards(considering)})</h1>
         <DeckCards cards={considering} />
       </div>

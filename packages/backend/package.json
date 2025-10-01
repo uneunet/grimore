@@ -1,20 +1,23 @@
 {
-  "name": "backend",
+  "name": "@grimore/backend",
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy --minify",
-    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
-    "migration:local": "wrangler d1 migrations apply grimore --local",
-    "migration:remote": "wrangler d1 migrations apply grimore --remote"
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
-    "@clerk/backend": "^2.16.0",
+    "@clerk/backend": "^2.17.0",
+    "@grimore/shared": "workspace:*",
     "@hono/clerk-auth": "^3.0.3",
-    "dotenv": "^17.2.2",
+    "@hono/zod-validator": "^0.7.3",
+    "@tidbcloud/serverless": "^0.2.0",
+    "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.5",
-    "hono": "^4.9.8",
-    "ulid": "^3.0.1"
+    "hono": "^4.9.9",
+    "mysql2": "^3.15.1",
+    "ulid": "^3.0.1",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "drizzle-kit": "^0.31.5",

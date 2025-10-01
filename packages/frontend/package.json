@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "@grimore/frontend",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -27,7 +27,7 @@
     "lucide-react": "^0.544.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "shared": "workspace:*",
+    "@grimore/shared": "workspace:*",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.13",
     "use-debounce": "^10.0.6"

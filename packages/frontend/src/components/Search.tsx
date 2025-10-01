@@ -73,7 +73,7 @@ export function Search({ deckId }) {
 
         <Dialog>
           <DialogTrigger>
-            <Button className="ph-bold ph-gear" />
+            <Button className="ph-bold ph-sliders-horizontal" />
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
