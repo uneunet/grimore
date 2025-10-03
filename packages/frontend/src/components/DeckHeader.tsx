@@ -1,3 +1,7 @@
+import { Schema } from "@grimore/shared";
+
+import * as z from "zod";
+
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,14 +15,14 @@ import {
 } from "@/components/ui/select";
 import { Dialog, DialogTitle, DialogTrigger, DialogHeader, DialogContent, DialogClose, DialogFooter } from "@/components/ui/dialog";
 
-export function DeckHeader({ deckId }) {
+export function DeckHeader({ deckId, name, format, status }: { deckId: string | undefined, name: string | undefined, format: z.infer<typeof Schema.Format> | undefined, status: z.infer<typeof Schema.Status> | undefined }) {
   return (
     <div className="flex flex-row justify-between">
       <div className="m-1.5">
-        <h1 className="text-3xl font-bold">ライブラリアウト</h1>
+        <h1 className="text-3xl font-bold">{ name }</h1>
         <div className="mx-1 flex flex-row gap-2">
-          <Badge>モダン</Badge>
-          <Badge variant="secondary">公開</Badge>
+          { format && <Badge>{ Schema.FormatNames[format] }</Badge> }
+          { status && <Badge variant="secondary">{ Schema.StatusNames[status] }</Badge> }
         </div>
       </div>
       
@@ -33,12 +37,12 @@ export function DeckHeader({ deckId }) {
 
           <div className="grid items-center gap-1.5">
             <Label htmlFor="name">デッキ名</Label>
-            <Input id="name" type="text" className="w-48"/>
+            <Input id="name" type="text" defaultValue={name} className="w-48"/>
           </div>
 
           <div className="grid items-center gap-1.5">
             <Label htmlFor="format">フォーマット</Label>
-            <Select defaultValue="standard">
+            <Select defaultValue={format}>
               <SelectTrigger>
                 <SelectValue id="format" placeholder="Format" />
               </SelectTrigger>
@@ -57,7 +61,7 @@ export function DeckHeader({ deckId }) {
 
           <div className="grid items-center gap-1.5">
             <Label htmlFor="publicity">公開状況</Label>
-            <Select defaultValue="public">
+            <Select defaultValue={status}>
               <SelectTrigger>
                 <SelectValue id="publicity" placeholder="公開" />
               </SelectTrigger>

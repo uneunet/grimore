@@ -1,4 +1,4 @@
-import { mysqlTable, int, varchar, text, timestamp, mysqlEnum } from "drizzle-orm/mysql-core";
+import { mysqlTable, int, varchar, text, timestamp, mysqlEnum, uniqueIndex } from "drizzle-orm/mysql-core";
 import { relations } from "drizzle-orm";
 import { ulid } from "ulid";
 
@@ -34,9 +34,6 @@ export const deckTable = mysqlTable("deck", {
 });
 
 export const cardTable = mysqlTable("card", {
-  id: varchar("id", { length: 26 })
-    .primaryKey()
-    .$default(() => ulid()),
   createdAt: timestamp("created_at")
     .defaultNow()
     .notNull(),
@@ -59,8 +56,13 @@ export const cardTable = mysqlTable("card", {
     "commander",
     "considering",
   ]).default("main").notNull(),
-});
-
+}, (table) => ({
+  uniqueDeckCard: uniqueIndex("unique_deck_oracle_board").on(
+    table.deckId,
+    table.oracleId,
+    table.board,
+  ),
+}));
 
 export const deckRelations = relations(deckTable, ({ many }) => ({
   card: many(cardTable)

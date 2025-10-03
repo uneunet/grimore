@@ -1,19 +1,12 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "832eb58f-4c92-4a26-be29-4303317eec07",
+  "id": "7e40faaa-6c83-49bb-a753-c792a93f112f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "card": {
       "name": "card",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(26)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -88,7 +81,17 @@
           "default": "'main'"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "unique_deck_oracle_board": {
+          "name": "unique_deck_oracle_board",
+          "columns": [
+            "deck_id",
+            "oracle_id",
+            "board"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {
         "card_deck_id_deck_id_fk": {
           "name": "card_deck_id_deck_id_fk",
@@ -104,14 +107,7 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {
-        "card_id": {
-          "name": "card_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraint": {}
     },

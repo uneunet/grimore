@@ -1,5 +1,4 @@
 CREATE TABLE `card` (
-	`id` varchar(26) NOT NULL,
 	`created_at` timestamp NOT NULL DEFAULT (now()),
 	`updated_at` timestamp NOT NULL DEFAULT (now()),
 	`deck_id` varchar(26) NOT NULL,
@@ -10,7 +9,7 @@ CREATE TABLE `card` (
 	`cmc` int,
 	`count` int NOT NULL,
 	`board` enum('main','side','commander','considering') NOT NULL DEFAULT 'main',
-	CONSTRAINT `card_id` PRIMARY KEY(`id`)
+	CONSTRAINT `unique_deck_oracle_board` UNIQUE(`deck_id`,`oracle_id`,`board`)
 );
 --> statement-breakpoint
 CREATE TABLE `deck` (

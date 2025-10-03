@@ -1,3 +1,10 @@
+import type { AppType } from "@grimore/backend";
+import { hc } from "hono/client";
+
+import * as z from "zod";
+
+import { Schema } from "@grimore/shared";
+
 import { useQuery } from "@tanstack/react-query";
 
 import { Input } from "@/components/ui/input";
@@ -20,13 +27,13 @@ import { buildScryfallQuery, extractImageUris } from '@/lib/utils';
 import { useState } from 'react';
 import { QUERYKEYS } from '@/lib/types';
 
-export function Search({ deckId }) {
+export function Search({ deckId, format }: { deckId: string, format: z.infer<typeof Schema.Format> | undefined }) {
   const [ name, setName ] = useState<string>("");
-  const [ query, setQuery ] = useState<string>("");
 
-  const { isPending, isSuccess, isError, data, refetch } = useQuery({
-    queryKey: [QUERYKEYS.scryfall, query],
+  const { isPending, isSuccess, isError, data } = useQuery({
+    queryKey: [QUERYKEYS.scryfall, name],
     queryFn: async () => {
+      const query = buildScryfallQuery({ name })
       const res = await fetch(`https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}+lang=ja`);
       if (!res.ok) {
         throw new Error("Network Error");
@@ -41,12 +48,11 @@ export function Search({ deckId }) {
     }
   });
 
-  const debouncedRefetch = useDebouncedCallback(
-    () => {
-      setQuery(buildScryfallQuery({ name }));
-      refetch();
+  const debouncedName = useDebouncedCallback(
+    ( name ) => {
+      setName(name)
     },
-    300
+    200
   );
 
   return (
@@ -54,7 +60,7 @@ export function Search({ deckId }) {
       <div className="flex gap-2 items-end">
         <div className="grid items-center gap-1.5">
           <Label htmlFor="name">Search</Label>
-          <Input id="name" type="search" placeholder="稲妻" className="w-48" value={name} onChange={(e) => { setName(e.target.value); debouncedRefetch()} } />
+          <Input id="name" type="search" placeholder="稲妻" className="w-48" onChange={(e) => debouncedName(e.target.value)} />
         </div>
 
         <div className="grid items-center gap-1.5">
@@ -66,6 +72,7 @@ export function Search({ deckId }) {
             <SelectContent>
               <SelectItem value="mainboard">メインボード</SelectItem>
               <SelectItem value="sideboard">サイドボード</SelectItem>
+              { format === "commander" && <SelectItem value="commander">統率領域</SelectItem> }
               <SelectItem value="considering">検討中</SelectItem>
             </SelectContent>
           </Select>
