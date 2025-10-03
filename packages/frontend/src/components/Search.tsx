@@ -33,7 +33,7 @@ export function Search({ deckId, format }: { deckId: string, format: z.infer<typ
   const { isPending, isSuccess, isError, data } = useQuery({
     queryKey: [QUERYKEYS.scryfall, name],
     queryFn: async () => {
-      const query = buildScryfallQuery({ name })
+      const query = buildScryfallQuery({ name, format })
       const res = await fetch(`https://api.scryfall.com/cards/search?q=${encodeURIComponent(query)}+lang=ja`);
       if (!res.ok) {
         throw new Error("Network Error");

@@ -1,97 +1,79 @@
 {
-  "version": "5",
-  "dialect": "mysql",
-  "id": "7e40faaa-6c83-49bb-a753-c792a93f112f",
+  "id": "c9417792-935f-4abb-94f5-13586bd149ea",
   "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "card": {
+    "public.card": {
       "name": "card",
+      "schema": "",
       "columns": {
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
+          "default": "now()"
         },
         "deck_id": {
           "name": "deck_id",
           "type": "varchar(26)",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "oracle_id": {
           "name": "oracle_id",
           "type": "varchar(36)",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "image_uri": {
           "name": "image_uri",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         },
         "name": {
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "card_type": {
           "name": "card_type",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "cmc": {
           "name": "cmc",
-          "type": "int",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         },
         "count": {
           "name": "count",
-          "type": "int",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "board": {
           "name": "board",
-          "type": "enum('main','side','commander','considering')",
+          "type": "board",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
           "default": "'main'"
         }
       },
-      "indexes": {
-        "unique_deck_oracle_board": {
-          "name": "unique_deck_oracle_board",
-          "columns": [
-            "deck_id",
-            "oracle_id",
-            "board"
-          ],
-          "isUnique": true
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "card_deck_id_deck_id_fk": {
           "name": "card_deck_id_deck_id_fk",
@@ -108,86 +90,126 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraint": {}
+      "uniqueConstraints": {
+        "unique_deck_oracle_board": {
+          "name": "unique_deck_oracle_board",
+          "nullsNotDistinct": false,
+          "columns": [
+            "deck_id",
+            "oracle_id",
+            "board"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     },
-    "deck": {
+    "public.deck": {
       "name": "deck",
+      "schema": "",
       "columns": {
         "id": {
           "name": "id",
           "type": "varchar(26)",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "primaryKey": true,
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
+          "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "(now())"
+          "default": "now()"
         },
         "user_id": {
           "name": "user_id",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "name": {
           "name": "name",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "format": {
           "name": "format",
-          "type": "enum('standard','pioneer','modern','legacy','vintage','pauper','commander','oathbreaker','other')",
+          "type": "format",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "status": {
           "name": "status",
-          "type": "enum('public','limited','private')",
+          "type": "status",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "default": "'public'"
         }
       },
       "indexes": {},
       "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "deck_id": {
-          "name": "deck_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "checkConstraint": {}
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
+  "enums": {
+    "public.board": {
+      "name": "board",
+      "schema": "public",
+      "values": [
+        "main",
+        "side",
+        "commander",
+        "considering"
+      ]
+    },
+    "public.format": {
+      "name": "format",
+      "schema": "public",
+      "values": [
+        "standard",
+        "pioneer",
+        "modern",
+        "legacy",
+        "vintage",
+        "pauper",
+        "commander",
+        "oathbreaker",
+        "other"
+      ]
+    },
+    "public.status": {
+      "name": "status",
+      "schema": "public",
+      "values": [
+        "public",
+        "limited",
+        "private"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
   "views": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "internal": {
-    "tables": {},
-    "indexes": {}
+    "tables": {}
   }
 }

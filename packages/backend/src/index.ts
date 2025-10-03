@@ -1,7 +1,5 @@
-import { connect } from "@tidbcloud/serverless";
-
 import { and, or, eq, desc } from "drizzle-orm";
-import { drizzle, TiDBServerlessDatabase } from 'drizzle-orm/tidb-serverless';
+import { drizzle, NeonDatabase } from 'drizzle-orm/neon-serverless';
 import { Hono } from 'hono'
 import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
 
@@ -19,15 +17,15 @@ type Bindings = {
 }
 
 type Variables = {
-  db: TiDBServerlessDatabase<typeof dbSchema>,
+  db: NeonDatabase<typeof dbSchema>
 }
 
 const app = new Hono<{ Bindings: Bindings, Variables: Variables }>()
   .use("*", clerkMiddleware())
   .use(async (c, next) => {
-    const db = drizzle(connect({ url: c.env.DB_URL }), {
+    const db = drizzle(c.env.DB_URL, {
       schema: dbSchema,
-    });
+    })
 
     c.set("db", db);
     await next();
@@ -91,7 +89,7 @@ const app = new Hono<{ Bindings: Bindings, Variables: Variables }>()
           name,
           format,
           status
-        }).$returningId();
+        }).returning();
 
       return c.json({ id }, 200);
     }
@@ -188,7 +186,6 @@ const app = new Hono<{ Bindings: Bindings, Variables: Variables }>()
 
       await c.var.db
         .insert(dbSchema.cardTable)
-        .ignore()
         .values({
           deckId: id,
           oracleId,
@@ -198,7 +195,8 @@ const app = new Hono<{ Bindings: Bindings, Variables: Variables }>()
           cmc,
           count,
           board,
-        });
+        })
+        .onConflictDoNothing();
 
       return c.json("ok", 200);
     }

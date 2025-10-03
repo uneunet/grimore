@@ -7,12 +7,8 @@ dotenv.config({
 
 export default defineConfig({
   schema: "./src/db/schema.ts",
-  dialect: "mysql",
+  dialect: "postgresql",
   dbCredentials: {
-    host: process.env.DB_HOST!,
-    user: process.env.DB_USERNAME!,
-    password: process.env.DB_PASSWORD!,
-    database: process.env.DB_DATABASE!,
-    ssl: {},
+    url: process.env.DB_URL!,
   },
 });

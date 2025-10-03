@@ -38,6 +38,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 import { Schema } from "@grimore/shared";
+import { useState } from "react";
 
 const formSchema = z.object({
   name: z.string().nonempty(),
@@ -47,6 +48,7 @@ const formSchema = z.object({
 
 export function Header() {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
 
   const form = useForm({
     validators: {
@@ -82,6 +84,7 @@ export function Header() {
     },
     onSuccess: (id) => {
       console.log(id)
+      setOpen(false);
       navigate({
         to: "/deck/$deckId",
         params: { deckId: id }
@@ -110,7 +113,7 @@ export function Header() {
               </NavigationMenuItem>
 
               <NavigationMenuItem>
-                <Dialog>
+                <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
                     <Button>新規作成</Button>
                   </DialogTrigger>

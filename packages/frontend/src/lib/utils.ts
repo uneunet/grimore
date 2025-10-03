@@ -1,7 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
-import type { CardType, Format } from "shared/types";
+import { Schema } from "@grimore/shared";
+import * as z from "zod";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -15,9 +16,9 @@ export function extractImageUris(card: any): string {
   return card.card_faces[0].image_uris.small;
 }
 
-export function buildScryfallQuery({ name, format, cardTypes }: { name?: string, format?: Format, cardTypes?: [CardType] }): string {
+export function buildScryfallQuery({ name, format, cardTypes }: { name?: string, format?: z.infer<typeof Schema.Format>, cardTypes?: [any] }): string {
   const nameQuery = name ?? "";
-  const formatQuery = format as string ?? "";
+  const formatQuery = format ? `f:${format}` : "";
   const cardTypesQuery = cardTypes?.map((s: string) => `t:${s}`).join(" ") ?? "";
 
   const query = [nameQuery, formatQuery, cardTypesQuery].filter((s: string) => s !== "").join(" ");

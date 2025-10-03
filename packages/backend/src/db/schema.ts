@@ -1,8 +1,33 @@
-import { mysqlTable, int, varchar, text, timestamp, mysqlEnum, uniqueIndex } from "drizzle-orm/mysql-core";
+import { pgTable, integer, text, varchar, timestamp, pgEnum, unique } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { ulid } from "ulid";
 
-export const deckTable = mysqlTable("deck", {
+export const formatEnum = pgEnum("format", [
+    "standard",
+    "pioneer",
+    "modern",
+    "legacy",
+    "vintage",
+    "pauper",
+    "commander",
+    "oathbreaker",
+    "other",
+]);
+
+export const statusEnum = pgEnum("status", [
+  "public",
+  "limited",
+  "private"
+]);
+
+export const boardEnum = pgEnum("board", [
+  "main",
+  "side",
+  "commander",
+  "considering",
+]);
+
+export const deckTable = pgTable("deck", {
   id: varchar("id", { length: 26 })
     .primaryKey()
     .$default(() => ulid()),
@@ -15,25 +40,11 @@ export const deckTable = mysqlTable("deck", {
     .notNull(),
   userId: text("user_id").notNull(),
   name: text("name").notNull(),
-  format: mysqlEnum("format", [
-    "standard",
-    "pioneer",
-    "modern",
-    "legacy",
-    "vintage",
-    "pauper",
-    "commander",
-    "oathbreaker",
-    "other",
-  ]).notNull(),
-  status: mysqlEnum("status", [
-    "public",
-    "limited",
-    "private"
-  ]).notNull(),
+  format: formatEnum().notNull(),
+  status: statusEnum().notNull().default("public"),
 });
 
-export const cardTable = mysqlTable("card", {
+export const cardTable = pgTable("card", {
   createdAt: timestamp("created_at")
     .defaultNow()
     .notNull(),
@@ -48,16 +59,11 @@ export const cardTable = mysqlTable("card", {
   imageUri: text("image_uri"),
   name: text("name").notNull(),
   cardType: text("card_type").notNull(),
-  cmc: int("cmc"),
-  count: int("count").notNull(),
-  board: mysqlEnum([
-    "main",
-    "side",
-    "commander",
-    "considering",
-  ]).default("main").notNull(),
+  cmc: integer("cmc"),
+  count: integer("count").notNull(),
+  board: boardEnum().notNull().default("main"),
 }, (table) => ({
-  uniqueDeckCard: uniqueIndex("unique_deck_oracle_board").on(
+  uniqueDeckCard: unique("unique_deck_oracle_board").on(
     table.deckId,
     table.oracleId,
     table.board,
